@@ -10,7 +10,7 @@
 
 | Module | Tổng Endpoints | ✅ Hoàn thành | ⚠️ Thiếu/Partial | ❌ Bỏ qua |
 |--------|:--------------:|:-------------:|:-----------------:|:---------:|
-| M1 — Auth | 9 | 8 | 1 (social login) | — |
+| M1 — Auth | 11 | 11 | — | — |
 | M2 — User Profile | 10 | 6 | 4 | — |
 | M3 — Tournament | 7 | 7 | — | — |
 | M4 — Participant | 5 | 4 | 1 (teams) | — |
@@ -18,7 +18,7 @@
 | M6 — Community Game | — | — | — | Bỏ qua |
 | M7 — Chat | — | — | — | Bỏ qua |
 | M8 — Notification | — | — | — | Bỏ qua |
-| **TỔNG** | **33** | **27** | **6** | |
+| **TỔNG** | **35** | **30** | **5** | |
 
 ---
 
@@ -28,13 +28,14 @@
 |---|--------|-------|:----:|--------|---------|---------|
 | 1.1 | POST | `/auth/register` | ❌ | ✅ Done | `RegisterCommandHandler` | Hash password bcrypt, trả `AuthResponseDto` |
 | 1.2 | POST | `/auth/login` | ❌ | ✅ Done | `LoginCommandHandler` | Validate credentials, refresh token rotation |
-| 1.3 | POST | `/auth/social` | ❌ | ⚠️ Partial | — | Chưa implement OAuth token verification (Google/Apple/FB) |
 | 1.4 | POST | `/auth/refresh` | ❌ | ✅ Done | `RefreshTokenCommandHandler` | Token rotation + reuse detection |
 | 1.5 | POST | `/auth/send-email-verification` | ✅ | ✅ Done | `SendEmailVerificationCommandHandler` | Gửi OTP 6 số qua email |
 | 1.6 | POST | `/auth/verify-email` | ✅ | ✅ Done | `VerifyEmailCommandHandler` | Verify OTP hash |
-| 1.7 | POST | `/auth/change-password` | ✅ | ✅ Done | `ChangePasswordCommandHandler` | Validate old password |
+| 1.7 | PUT | `/auth/password` | ✅ | ✅ Done | `ChangePasswordCommandHandler` | Validate old password |
 | 1.8 | POST | `/auth/forgot-password` | ❌ | ✅ Done | `ForgotPasswordCommandHandler` | Gửi OTP 6 số qua email, không tiết lộ email tồn tại |
 | 1.9 | POST | `/auth/reset-password` | ❌ | ✅ Done | `ResetPasswordCommandHandler` | Verify OTP, đặt lại password, xóa token |
+| 1.10 | POST | `/auth/google-login` | ❌ | ✅ Done | `GoogleLoginCommandHandler` | Verify Google ID Token, Find/Create user, Link provider |
+| 1.11 | POST | `/auth/facebook-login` | ❌ | ✅ Done | `FacebookLoginCommandHandler` | Graph API verify, Find/Create user, handle no-email case |
 
 ### Request/Response nhanh
 
@@ -51,7 +52,7 @@ POST /auth/refresh
   Body: { refreshToken }
   Response: 200 { tokens: { accessToken, refreshToken } }
 
-POST /auth/change-password  [Authorize]
+PUT /auth/password  [Authorize]
   Body: { currentPassword, newPassword }
   Response: 200 { message }
 
@@ -71,6 +72,18 @@ POST /auth/forgot-password
 POST /auth/reset-password
   Body: { email, otp, newPassword }
   Response: 200 { message }
+
+POST /auth/google-login
+  Body: { idToken: "eyJhbGciOiJSUzI1NiIs..." }
+  Response: 200 { accessToken, refreshToken, expiresIn, user: UserTokenDto, isNewUser: bool }
+  // idToken từ Google Sign-In SDK (Web GIS / Expo / Flutter)
+  // isNewUser = true → redirect đến onboarding
+
+POST /auth/facebook-login
+  Body: { accessToken: "EAABwzLixFW8BO..." }
+  Response: 200 { accessToken, refreshToken, expiresIn, user: UserTokenDto, isNewUser: bool }
+  // accessToken từ Facebook SDK
+  // Nếu không có email → email = "fb_{id}@facebook.placeholder"
 ```
 
 ---
@@ -261,7 +274,6 @@ Auto-complete tournament: Khi tất cả matches đã Complete → TournamentSta
 
 | Feature | Route | Độ ưu tiên | Lý do thiếu |
 |---------|-------|:----------:|------------|
-| Social Login | `POST /auth/social` | Medium | Cần external OAuth provider SDK |
 | Upload Avatar | `POST /users/me/avatar` | Medium | Cần `IStorageService` (S3/Azure Blob) |
 | User Tournament History | `GET /users/me/tournaments` | Low | Query chưa build |
 | Following List | `GET /users/me/following` | Low | Query chưa build |
@@ -284,6 +296,8 @@ AppPickleball.Application    ✅ Build OK  (CQRS handlers: Auth, User, Tournamen
 AppPickleball.Infrastructure ✅ Build OK  (EF Core + Repos + Services + DI)
 AppPickleball.Api            ✅ Build OK  (Controllers + Middleware + DI)
 AppPickleball.Tests          ✅ Build OK  (scaffold only)
+
+Last build: 2026-03-13 — 0 errors, 0 warnings
 ```
 
 ---
@@ -335,10 +349,21 @@ AppPickleball.Application/Features/
     └── DTOs/                       MatchDto, MatchDetailDto, StandingDto, TournamentResultDto
 
 AppPickleball.Api/Controllers/
-├── AuthController.cs       6 endpoints
+├── AuthController.cs       11 endpoints (register, login, refresh, password, send-verification, verify-email, forgot-password, reset-password, google-login, facebook-login)
 ├── UserController.cs       5 endpoints
 ├── TournamentController.cs 11 endpoints
 └── MatchController.cs      5 endpoints
+
+AppPickleball.Application/Features/Auth/Commands/
+├── GoogleLogin/            GoogleLoginCommand + GoogleLoginCommandHandler
+└── FacebookLogin/          FacebookLoginCommand + FacebookLoginCommandHandler
+
+AppPickleball.Infrastructure/Services/
+├── GoogleAuthService.cs    IGoogleAuthService — verify Google ID Token (Google.Apis.Auth)
+└── FacebookAuthService.cs  IFacebookAuthService — verify Facebook Access Token (Graph API)
+
+AppPickleball.Infrastructure/Persistence/Repositories/
+└── UserAuthProviderRepository.cs  IUserAuthProviderRepository — FindByProviderAsync
 ```
 
 ---

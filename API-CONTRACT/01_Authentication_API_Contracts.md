@@ -4,10 +4,10 @@
 |-----------|----------|
 | **Module** | Authentication |
 | **Base URL** | `/api` |
-| **Version** | 1.0 |
-| **Ngày cập nhật** | 2026-03-12 |
+| **Version** | 1.1 |
+| **Ngày cập nhật** | 2026-03-13 |
 | **Phase** | 1 |
-| **Số endpoints** | 7 |
+| **Số endpoints** | 11 |
 | **DB Tables** | Users, UserAuthProviders, RefreshTokens |
 
 ---
@@ -18,11 +18,14 @@
 |---|--------|----------|:----:|:----------:|-------|
 | 1.1 | POST | `/auth/register` | ❌ | 10/h | Đăng ký tài khoản mới |
 | 1.2 | POST | `/auth/login` | ❌ | 5/15min | Đăng nhập bằng email + mật khẩu |
-| 1.3 | POST | `/auth/social` | ❌ | 10/15min | Đăng nhập qua Google / Apple / Facebook |
 | 1.4 | POST | `/auth/refresh` | ❌ | 30/h | Làm mới access token |
 | 1.5 | PUT | `/auth/password` | ✅ Auth | 3/h | Đổi mật khẩu |
 | 1.6 | POST | `/auth/send-verification` | ✅ Auth | 3/h | Gửi OTP xác thực email |
 | 1.7 | POST | `/auth/verify-email` | ✅ Auth | 5/h | Xác thực email bằng OTP |
+| 1.8 | POST | `/auth/forgot-password` | ❌ | 3/h | Quên mật khẩu — gửi OTP reset |
+| 1.9 | POST | `/auth/reset-password` | ❌ | 5/h | Đặt lại mật khẩu bằng OTP |
+| 1.10 | POST | `/auth/google-login` | ❌ | 10/15min | Đăng nhập bằng Google SSO |
+| 1.11 | POST | `/auth/facebook-login` | ❌ | 10/15min | Đăng nhập bằng Facebook SSO |
 
 ---
 
@@ -261,60 +264,57 @@ Client                          Server                          Database
 
 ---
 
-## 1.3. POST /auth/social — Đăng nhập qua mạng xã hội
+## 1.10. POST /auth/google-login — Đăng nhập bằng Google SSO
 
 ### Summary
-Đăng nhập hoặc đăng ký tự động bằng Google / Apple / Facebook OAuth2. Nếu email chưa tồn tại → tạo tài khoản mới + liên kết provider vào bảng `UserAuthProviders`.
+Xác thực Google ID Token từ client SDK (Web GIS / React Native Expo / Flutter). Backend verify với Google, tự động tạo tài khoản nếu chưa tồn tại, liên kết Google account vào `UserAuthProviders`.
+
+> **Khác với login email/password:** Luồng register + login gộp làm một. Nếu email chưa có tài khoản → tự động tạo + liên kết. Nếu đã có → link thêm Google provider (nếu chưa link).
 
 ### User Story
 ```
 Là một người dùng mới,
-Tôi muốn đăng nhập nhanh bằng tài khoản Google hoặc Apple,
+Tôi muốn đăng nhập nhanh bằng tài khoản Google,
 Để không phải nhớ thêm mật khẩu mới.
 
 Acceptance Criteria:
-- Tôi nhấn nút "Đăng nhập bằng Google/Facebook" trên ứng dụng
-- Ứng dụng gửi token từ provider lên server
-- Nếu email chưa có tài khoản → tự động tạo + liên kết provider
-- Nếu email đã có tài khoản → liên kết provider mới (nếu chưa có) + đăng nhập
-- Tôi nhận được JWT tokens
+- Tôi nhấn nút "Đăng nhập bằng Google" trên ứng dụng
+- Google SDK trả về ID Token cho app
+- App gửi ID Token lên server
+- Server verify với Google, tìm/tạo user, trả về JWT
+- Nếu tài khoản mới (isNewUser = true) → app redirect đến màn hình hoàn thiện hồ sơ
 ```
 
 ### Luồng xử lý
 
 ```
-Client               App/Web              Server               Google/Apple
-  │                    │                    │                      │
-  │  Tap "Login        │                    │                      │
-  │  with Google"      │                    │                      │
-  │───────────────────>│                    │                      │
-  │                    │  OAuth2 flow       │                      │
-  │                    │─────────────────────────────────────────>│
-  │                    │                    │                      │
-  │                    │  idToken           │                      │
-  │                    │<─────────────────────────────────────────│
-  │                    │                    │                      │
-  │                    │  POST /auth/social │                      │
-  │                    │  {provider, token} │                      │
-  │                    │───────────────────>│                      │
-  │                    │                    │                      │
-  │                    │                    │  Verify idToken       │
-  │                    │                    │─────────────────────>│
-  │                    │                    │  {email, name, sub}  │
-  │                    │                    │<─────────────────────│
-  │                    │                    │                      │
-  │                    │                    │  Find user by email   │
-  │                    │                    │  OR by provider+sub   │
-  │                    │                    │                      │
-  │                    │                    │  Nếu chưa có:        │
-  │                    │                    │  → Tạo User mới      │
-  │                    │                    │                      │
-  │                    │                    │  Generate tokens      │
-  │                    │                    │                      │
-  │                    │  200 {tokens, user}│                      │
-  │                    │<──────────────────│                      │
-  │  Logged in!        │                    │                      │
-  │<───────────────────│                    │                      │
+Client (Web/Mobile)          AppPickleball API           Google OAuth
+  │                               │                           │
+  │ 1. Google Sign-In (SDK)       │                           │
+  │──────────────────────────────────────────────────────────>│
+  │                               │                           │
+  │ 2. Nhận ID Token              │                           │
+  │<──────────────────────────────────────────────────────────│
+  │                               │                           │
+  │ 3. POST /auth/google-login    │                           │
+  │    { idToken }                │                           │
+  │──────────────────────────────>│                           │
+  │                               │ 4. GoogleJsonWebSignature │
+  │                               │    .ValidateAsync()       │
+  │                               │──────────────────────────>│
+  │                               │ 5. { sub, email, name,    │
+  │                               │    picture }              │
+  │                               │<──────────────────────────│
+  │                               │                           │
+  │                               │ 6. Find/Create User       │
+  │                               │    + Link GoogleProvider  │
+  │                               │    + Generate JWT tokens  │
+  │                               │                           │
+  │ 7. 200 { accessToken,         │                           │
+  │         refreshToken,         │                           │
+  │         expiresIn, user,      │                           │
+  │         isNewUser }           │                           │
+  │<──────────────────────────────│                           │
 ```
 
 ### Auth & Role
@@ -326,59 +326,186 @@ Client               App/Web              Server               Google/Apple
 
 ### Request
 
+**Headers:**
+```
+Content-Type: application/json
+```
+
 **Body:**
 ```json
 {
-  "provider": "google",
   "idToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6..."
 }
 ```
 
 | Field | Type | Required | Validation |
 |-------|------|:--------:|------------|
-| provider | string | ✅ | `"google"`, `"apple"`, hoặc `"facebook"` |
-| idToken | string | Có điều kiện | Token hợp lệ từ Google hoặc Apple (bắt buộc nếu provider = google/apple) |
-| accessToken | string | Có điều kiện | Access token từ Facebook (bắt buộc nếu provider = facebook) |
+| idToken | string | ✅ | Google ID Token (JWT) từ Google Sign-In SDK. Audience phải khớp với `GoogleAuth.ClientId` |
 
 ### Response
 
-**200 OK** (user đã tồn tại) hoặc **201 Created** (tạo mới):
+**200 OK:**
 ```json
 {
+  "success": true,
+  "message": "Đăng nhập Google thành công",
   "data": {
-    "accessToken": "eyJhbGciOiJIUzI1...",
+    "accessToken": "eyJhbGciOiJIUzI1NiIs...",
     "refreshToken": "dGhpcyBpcyBhIHJl...",
     "expiresIn": 900,
-    "isNewUser": true,
+    "isNewUser": false,
     "user": {
       "id": "550e8400-e29b-41d4-a716-446655440000",
       "email": "player@gmail.com",
       "name": "Nguyễn Văn A",
-      "avatarUrl": "https://lh3.googleusercontent.com/...",
+      "avatarUrl": "https://lh3.googleusercontent.com/photo.jpg",
       "skillLevel": 3.0,
-      "createdAt": "2026-03-12T14:30:00Z"
+      "emailVerified": true,
+      "createdAt": "2026-03-13T00:00:00Z"
     }
   }
 }
 ```
 
+| Field | Type | Mô tả |
+|-------|------|-------|
+| isNewUser | bool | `true` nếu tài khoản vừa được tạo → client redirect onboarding |
+
 ### Error Codes
 
 | HTTP | Error Type | Điều kiện |
 |:----:|-----------|-----------|
-| 400 | INVALID_PROVIDER | Provider không phải "google", "apple", hoặc "facebook" |
-| 401 | INVALID_TOKEN | Token không hợp lệ, hết hạn, hoặc bị giả mạo |
+| 401 | UNAUTHORIZED | ID Token không hợp lệ, hết hạn, sai audience |
 
 ### Business Rules
 
-1. Server phải verify token trực tiếp với provider (không tin client):
-   - **Google/Apple:** Verify `idToken` qua Google/Apple API
-   - **Facebook:** Gọi Facebook Graph API `GET /me?fields=id,name,email&access_token={accessToken}`
-2. Nếu email từ social trùng với tài khoản đã có → liên kết (link) provider vào bảng `UserAuthProviders`
-3. Tên và avatar lấy từ provider profile nếu tạo mới, lưu vào cả `Users` và `UserAuthProviders`
-4. User tạo qua social không có password → `PasswordHash = NULL` → không thể login bằng email/password
-5. `isNewUser: true` để FE biết cần hiển thị màn hình onboarding
-6. User đăng nhập social được tự động `EmailVerified = TRUE` (vì email đã được provider xác thực)
+1. Backend verify ID Token bằng `GoogleJsonWebSignature.ValidateAsync()` với `ClientId` từ config
+2. Nếu đã có `UserAuthProvider(provider="google", providerUserId=sub)` → Case A: Đăng nhập nhanh
+3. Nếu email đã tồn tại nhưng chưa link Google → Case B: Link thêm Google provider
+4. Nếu email chưa tồn tại → Case C: Tạo user mới (`EmailVerified = TRUE`, `PasswordHash = NULL`)
+5. `isNewUser = true` để FE biết cần hiển thị màn hình hoàn thiện hồ sơ
+6. User tạo qua Google được `EmailVerified = TRUE` tự động (Google đã xác thực email)
+7. Cần khai báo trong `appsettings.json`: `GoogleAuth.ClientId`
+
+---
+
+## 1.11. POST /auth/facebook-login — Đăng nhập bằng Facebook SSO
+
+### Summary
+Xác thực Facebook Access Token từ client SDK (Web JS SDK / React Native / Flutter). Backend gọi Facebook Graph API để verify, tự động tạo tài khoản nếu chưa tồn tại.
+
+> **Khác với Google:** Facebook trả về Access Token (opaque string), không phải ID Token (JWT). Backend phải gọi `GET /me` để lấy thông tin user. **Facebook không đảm bảo trả email** — user có thể từ chối cấp quyền.
+
+### User Story
+```
+Là một người dùng mới,
+Tôi muốn đăng nhập bằng tài khoản Facebook,
+Để không phải tạo thêm mật khẩu.
+
+Acceptance Criteria:
+- Tôi nhấn nút "Đăng nhập bằng Facebook" trên ứng dụng
+- Facebook SDK trả về Access Token cho app
+- App gửi Access Token lên server
+- Server verify với Graph API, tìm/tạo user, trả về JWT
+- Nếu Facebook không cung cấp email → tài khoản được tạo với placeholder email
+```
+
+### Luồng xử lý
+
+```
+Client (Web/Mobile)          AppPickleball API           Facebook Graph API
+  │                               │                           │
+  │ 1. Facebook Login (SDK)       │                           │
+  │──────────────────────────────────────────────────────────>│
+  │                               │                           │
+  │ 2. Nhận Access Token          │                           │
+  │<──────────────────────────────────────────────────────────│
+  │                               │                           │
+  │ 3. POST /auth/facebook-login  │                           │
+  │    { accessToken }            │                           │
+  │──────────────────────────────>│                           │
+  │                               │ 4. GET /me?fields=        │
+  │                               │    id,name,email          │
+  │                               │    &access_token={token}  │
+  │                               │──────────────────────────>│
+  │                               │ 5. { id, name, email? }   │
+  │                               │<──────────────────────────│
+  │                               │                           │
+  │                               │ 6. Find/Create User       │
+  │                               │    + Link FbProvider      │
+  │                               │    + Generate JWT tokens  │
+  │                               │                           │
+  │ 7. 200 { accessToken, ... }   │                           │
+  │<──────────────────────────────│                           │
+```
+
+### Auth & Role
+
+| Yêu cầu | Giá trị |
+|---------|---------|
+| Authentication | Không yêu cầu (Public) |
+| Rate Limit | 10 requests / 15 phút / IP |
+
+### Request
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "accessToken": "EAABwzLixFW8BO..."
+}
+```
+
+| Field | Type | Required | Validation |
+|-------|------|:--------:|------------|
+| accessToken | string | ✅ | Facebook User Access Token từ Facebook SDK |
+
+### Response
+
+**200 OK:**
+```json
+{
+  "success": true,
+  "message": "Đăng nhập Facebook thành công",
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+    "refreshToken": "dGhpcyBpcyBhIHJl...",
+    "expiresIn": 900,
+    "isNewUser": true,
+    "user": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "email": "user@gmail.com",
+      "name": "Nguyễn Văn A",
+      "avatarUrl": null,
+      "skillLevel": 3.0,
+      "emailVerified": true,
+      "createdAt": "2026-03-13T00:00:00Z"
+    }
+  }
+}
+```
+
+> **Lưu ý:** Nếu Facebook không cung cấp email, `user.email` sẽ là `fb_{facebookId}@facebook.placeholder`. Client nên hiện dialog yêu cầu nhập email thật khi `isNewUser = true`.
+
+### Error Codes
+
+| HTTP | Error Type | Điều kiện |
+|:----:|-----------|-----------|
+| 401 | UNAUTHORIZED | Access Token không hợp lệ, hết hạn, hoặc bị revoke |
+
+### Business Rules
+
+1. Backend gọi `GET https://graph.facebook.com/me?fields=id,name,email&access_token={token}` để verify
+2. Nếu đã có `UserAuthProvider(provider="facebook", providerUserId=fbId)` → Case A: Đăng nhập nhanh
+3. Nếu có email và email đã tồn tại nhưng chưa link Facebook → Case B: Link thêm provider
+4. Nếu có email và email chưa tồn tại → Case C: Tạo user mới (`EmailVerified = TRUE`)
+5. Nếu Facebook **không trả email** → Case D: Tạo user với `email = "fb_{id}@facebook.placeholder"`, `EmailVerified = FALSE`
+6. `isNewUser = true` để FE biết cần hiển thị màn hình hoàn thiện hồ sơ + nhập email thật (Case D)
+7. Cần khai báo trong `appsettings.json`: `FacebookAuth.AppId`, `FacebookAuth.AppSecret`
 
 ---
 
