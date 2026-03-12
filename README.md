@@ -264,6 +264,143 @@ Mỗi file có: Acceptance Criteria (checklist), Validation Rules (table), Edge 
 
 ---
 
+## Onboarding — Bắt Đầu Nhanh
+
+> Dành cho **thành viên mới** hoặc **Claude CLI** khi vào dự án lần đầu.
+
+### Ngày 1 — Hiểu hệ thống (1–2 giờ)
+
+```
+1. Đọc README này (file bạn đang xem) → nắm tổng quan
+2. Đọc Architecture Overview       → hiểu tech stack, layers, modules
+3. Đọc MAINFLOWS/00_Flow_Overview  → hiểu luồng nghiệp vụ chính
+4. Setup môi trường local          → ENVIRONMENT/Local_Setup.md
+```
+
+### Ngày 2 — Đi sâu theo vai trò
+
+> Xem bảng **"Đọc Tài Liệu Theo Vai Trò"** bên dưới — chọn đúng role, đọc đúng docs.
+
+### Ngày 3+ — Bắt đầu code
+
+```
+1. Chọn task từ module roadmap (M1 → M7)
+2. Đọc BA-SPEC của module đó
+3. Đọc API-CONTRACT tương ứng
+4. Code theo CONVENTIONS
+5. Verify với Integration Checklist
+```
+
+### Checklist trước khi code task đầu tiên
+
+- [ ] Đã đọc `CONVENTIONS/` cho role của mình
+- [ ] Đã đọc `BA-SPEC/` của module đang làm
+- [ ] Đã setup local DB với `DATABASE/create_pickleball_database.sql`
+- [ ] Đã seed data với `DATABASE/seed_data.sql`
+- [ ] Đã kiểm tra `ENVIRONMENT/Environment_Variables.md` — đủ env vars
+- [ ] Claude CLI: đã đọc `CLAUDE.md` trong repo
+
+---
+
+## Đọc Tài Liệu Theo Vai Trò
+
+### Backend Developer (.NET)
+
+| Ưu tiên | Tài liệu | Mục đích |
+|:-------:|---------|---------|
+| 🔴 Bắt buộc | [Backend_DotNet_Convention.md](./CONVENTIONS/Backend_DotNet_Convention.md) | CQRS, Repository, EF Core patterns |
+| 🔴 Bắt buộc | [Architecture_Overview.md](./ARCHITECTURE/Architecture_Overview.md) | Hiểu layer dependencies |
+| 🔴 Bắt buộc | [Database_Design.md](./DATABASE/Database_Design.md) + [create_pickleball_database.sql](./DATABASE/create_pickleball_database.sql) | Schema, relationships, indexes |
+| 🔴 Bắt buộc | [API-CONTRACT/](./API-CONTRACT/00_API_Overview.md) | Endpoint contracts, request/response |
+| 🟡 Quan trọng | [MAINFLOWS/](./MAINFLOWS/00_Flow_Overview.md) | Business flows trước khi code |
+| 🟡 Quan trọng | [BA-SPEC/](./BA-SPEC/) | Validation rules, edge cases |
+| 🟡 Quan trọng | [SignalR_Contracts.md](./REALTIME/SignalR_Contracts.md) | Hub events, payload types |
+| 🟢 Khi cần | [Backend_Architecture_DevOps.md](./ARCHITECTURE/Backend_Architecture_DevOps.md) | CI/CD, deployment flow |
+| 🟢 Khi cần | [seed_data.sql](./DATABASE/seed_data.sql) | Dữ liệu test sẵn có |
+
+---
+
+### Frontend Developer (React Web)
+
+| Ưu tiên | Tài liệu | Mục đích |
+|:-------:|---------|---------|
+| 🔴 Bắt buộc | [Frontend_React_Convention.md](./CONVENTIONS/Frontend_React_Convention.md) | Folder structure, Zustand, React Query |
+| 🔴 Bắt buộc | [FE_BE_Integration.md](./CONVENTIONS/FE_BE_Integration.md) | Token storage, 401 refresh, CORS |
+| 🔴 Bắt buộc | [Web_Screen_Inventory.md](./SCREEN-INVENTORY/Web_Screen_Inventory.md) | Danh sách 21 màn hình, routes, components |
+| 🔴 Bắt buộc | [API-CONTRACT/](./API-CONTRACT/00_API_Overview.md) | Biết endpoint nào gọi từ màn nào |
+| 🟡 Quan trọng | [MAINFLOWS/](./MAINFLOWS/00_Flow_Overview.md) | Hiểu flow trước khi build UI |
+| 🟡 Quan trọng | [SignalR_Contracts.md](./REALTIME/SignalR_Contracts.md) | TypeScript interfaces cho realtime |
+| 🟢 Khi cần | [Environment_Variables.md](./ENVIRONMENT/Environment_Variables.md) | VITE_ env vars |
+| 🟢 Khi cần | [BA-SPEC/](./BA-SPEC/) | Validation messages, UI edge cases |
+
+---
+
+### Mobile Developer (React Native / Expo)
+
+| Ưu tiên | Tài liệu | Mục đích |
+|:-------:|---------|---------|
+| 🔴 Bắt buộc | [Frontend_React_Convention.md](./CONVENTIONS/Frontend_React_Convention.md) | Shared convention FE/Mobile |
+| 🔴 Bắt buộc | [FE_BE_Integration.md](./CONVENTIONS/FE_BE_Integration.md) | Auth flow, token (expo-secure-store) |
+| 🔴 Bắt buộc | [Mobile_Screen_Inventory.md](./SCREEN-INVENTORY/Mobile_Screen_Inventory.md) | Navigation structure, permissions |
+| 🔴 Bắt buộc | [API-CONTRACT/](./API-CONTRACT/00_API_Overview.md) | Endpoint list |
+| 🟡 Quan trọng | [SignalR_Contracts.md](./REALTIME/SignalR_Contracts.md) | Realtime events |
+| 🟡 Quan trọng | [05_Notification_Flow.md](./MAINFLOWS/05_Notification_Flow.md) | FCM push notification flow |
+| 🟢 Khi cần | [Environment_Variables.md](./ENVIRONMENT/Environment_Variables.md) | Expo env vars |
+
+---
+
+### Business Analyst / Product Owner
+
+| Ưu tiên | Tài liệu | Mục đích |
+|:-------:|---------|---------|
+| 🔴 Bắt buộc | [Architecture_Overview.md](./ARCHITECTURE/Architecture_Overview.md) | Tổng quan product, modules, roadmap |
+| 🔴 Bắt buộc | [MAINFLOWS/](./MAINFLOWS/00_Flow_Overview.md) | Nghiệp vụ end-to-end |
+| 🔴 Bắt buộc | [BA-SPEC/](./BA-SPEC/) | Acceptance criteria, business rules |
+| 🟡 Quan trọng | [Web_Screen_Inventory.md](./SCREEN-INVENTORY/Web_Screen_Inventory.md) | Danh sách màn hình, user roles |
+| 🟡 Quan trọng | [Mobile_Screen_Inventory.md](./SCREEN-INVENTORY/Mobile_Screen_Inventory.md) | Mobile UX |
+| 🟢 Khi cần | [API-CONTRACT/00_API_Overview.md](./API-CONTRACT/00_API_Overview.md) | Scope của từng tính năng |
+
+---
+
+### QA / Tester
+
+| Ưu tiên | Tài liệu | Mục đích |
+|:-------:|---------|---------|
+| 🔴 Bắt buộc | [BA-SPEC/](./BA-SPEC/) | Acceptance criteria để viết test cases |
+| 🔴 Bắt buộc | [API-CONTRACT/](./API-CONTRACT/00_API_Overview.md) | Request/response để test API |
+| 🔴 Bắt buộc | [seed_data.sql](./DATABASE/seed_data.sql) | Dữ liệu test sẵn có (users, tournaments) |
+| 🟡 Quan trọng | [MAINFLOWS/](./MAINFLOWS/00_Flow_Overview.md) | End-to-end flows để test regression |
+| 🟡 Quan trọng | [04_Integration_Checklist.md](./EXECUTION-PLAN/04_Integration_Checklist.md) | Checklist verify hệ thống |
+| 🟢 Khi cần | [Environment_Variables.md](./ENVIRONMENT/Environment_Variables.md) | Setup test environment |
+
+---
+
+### DevOps / Infrastructure
+
+| Ưu tiên | Tài liệu | Mục đích |
+|:-------:|---------|---------|
+| 🔴 Bắt buộc | [Deploy_Target.md](./DEPLOYMENT/Deploy_Target.md) | Server spec, provider, strategy |
+| 🔴 Bắt buộc | [Docker_Infrastructure.md](./DEPLOYMENT/Docker_Infrastructure.md) | Dockerfile + docker-compose |
+| 🔴 Bắt buộc | [CICD_Pipeline.md](./DEPLOYMENT/CICD_Pipeline.md) | GitHub Actions workflows |
+| 🔴 Bắt buộc | [Nginx_Config.md](./DEPLOYMENT/Nginx_Config.md) | Reverse proxy, SSL, WebSocket |
+| 🟡 Quan trọng | [Environment_Variables.md](./ENVIRONMENT/Environment_Variables.md) | Tất cả secrets cần thiết |
+| 🟢 Khi cần | [create_pickleball_database.sql](./DATABASE/create_pickleball_database.sql) | Init DB production |
+
+---
+
+### Claude CLI / AI Agent
+
+| Ưu tiên | Tài liệu | Mục đích |
+|:-------:|---------|---------|
+| 🔴 Bắt buộc | `CLAUDE.md` (trong repo đang làm) | Rules và navigation |
+| 🔴 Bắt buộc | [00_Master_Execution_Plan.md](./EXECUTION-PLAN/00_Master_Execution_Plan.md) | Thứ tự build toàn bộ |
+| 🔴 Bắt buộc | [Backend_DotNet_Convention.md](./CONVENTIONS/Backend_DotNet_Convention.md) hoặc [Frontend_React_Convention.md](./CONVENTIONS/Frontend_React_Convention.md) | Code đúng pattern |
+| 🔴 Bắt buộc | BA-SPEC + MAINFLOWS của module đang build | Không code sai logic |
+| 🟡 Quan trọng | API-CONTRACT của module đang build | Request/response schema |
+| 🟡 Quan trọng | [Database_Design.md](./DATABASE/Database_Design.md) | Entity relationships |
+
+---
+
 ## Repos Liên Quan
 
 | Repo | CLAUDE.md | Mô tả |
@@ -305,4 +442,4 @@ Mỗi file có: Acceptance Criteria (checklist), Validation Rules (table), Edge 
 
 ---
 
-*Cập nhật lần cuối: Tháng 3, 2026 — v1.0*
+*Cập nhật lần cuối: Tháng 3, 2026 — v1.1*
