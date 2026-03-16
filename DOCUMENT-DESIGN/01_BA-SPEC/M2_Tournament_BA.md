@@ -35,24 +35,26 @@
 | US-M2-07 | User | Đăng ký tham gia giải đấu đang mở | Trở thành Participant và thi đấu |
 | US-M2-08 | User | Vào waitlist khi giải đã đầy | Được tự động thăng lên nếu có slot trống |
 | US-M2-09 | Participant | Rút khỏi giải đấu trước khi giải bắt đầu | Nhường chỗ cho người khác khi không thể tham dự |
-| US-M2-10 | Participant | Check-in vào giải đấu trong cửa sổ check-in | Xác nhận sự hiện diện, chính thức tham dự giải |
-| US-M2-11 | Organizer | Start giải đấu (CheckInOpen → InProgress) | Bắt đầu vòng thi đấu chính thức |
-| US-M2-12 | Organizer | Mark giải đấu là Completed | Kết thúc giải, chốt kết quả chính thức |
-| US-M2-13 | Organizer | Generate bracket sau khi check-in đóng | Tạo lịch thi đấu cho tất cả participants đã check-in |
-| US-M2-14 | Participant | Xem bracket của giải đấu | Biết mình thi đấu với ai, ở vòng nào |
-| US-M2-15 | Participant | Xem lịch thi đấu cá nhân | Biết cụ thể các trận đấu của mình (ngày giờ, đối thủ) |
-| US-M2-20 | Organizer | Mời user cụ thể tham gia giải đấu | User đó nhận invitation và có thể accept/decline |
-| US-M2-21 | Organizer | Thêm user trực tiếp vào giải (không cần accept) | Thêm nhanh người quen mà không cần chờ họ tự đăng ký |
-| US-M2-22 | User | Nhận invitation từ Organizer và accept hoặc decline | Quyết định có tham gia giải hay không |
-| US-M2-23 | User | Gửi application xin vào giải kèm message giới thiệu | Organizer biết thêm về tôi trước khi duyệt |
-| US-M2-24 | Organizer | Xem danh sách tất cả invitations đã gửi (kèm trạng thái) | Biết ai đã accept, ai chưa phản hồi, ai decline |
-| US-M2-25 | Organizer | Xem danh sách applications đang chờ duyệt | Quyết định ai được tham gia giải |
-| US-M2-26 | Organizer | Approve application của user | User được tham gia giải chính thức |
-| US-M2-27 | Organizer | Reject application kèm lý do | User biết tại sao bị từ chối |
-| US-M2-16 | Guest / User | Xem danh sách giải đấu đang mở/sắp diễn ra | Khám phá giải phù hợp để tham gia |
-| US-M2-17 | Guest / User | Tìm kiếm giải đấu theo tên | Tìm nhanh giải đã biết tên |
-| US-M2-18 | Guest / User | Lọc giải đấu theo loại, trạng thái, địa điểm, ngày, trình độ | Thu hẹp danh sách phù hợp nhu cầu |
-| US-M2-19 | Guest / User | Sắp xếp kết quả tìm kiếm theo ngày/phổ biến | Dễ dàng tìm giải gần nhất hoặc nổi bật nhất |
+| US-M2-10 | User | Đăng ký Doubles với partner | Cùng partner tham gia giải đấu đôi |
+| US-M2-11 | User | Gửi application xin vào giải kèm message giới thiệu | Organizer biết thêm về tôi trước khi duyệt |
+| US-M2-12 | User | Nhận invitation từ Organizer và accept hoặc decline | Quyết định có tham gia giải hay không |
+| US-M2-13 | Organizer | Mời user cụ thể tham gia giải đấu | User đó nhận invitation và có thể accept/decline |
+| US-M2-14 | Organizer | Thêm user trực tiếp vào giải (không cần accept) | Thêm nhanh người quen mà không cần chờ họ tự đăng ký |
+| US-M2-15 | Organizer | Xem danh sách tất cả invitations đã gửi (kèm trạng thái) | Biết ai đã accept, ai chưa phản hồi, ai decline |
+| US-M2-16 | Organizer | Xem danh sách applications đang chờ duyệt | Quyết định ai được tham gia giải |
+| US-M2-17 | Organizer | Approve application của user | User được tham gia giải chính thức |
+| US-M2-18 | Organizer | Reject application kèm lý do | User biết tại sao bị từ chối |
+| US-M2-19 | Participant | Check-in vào giải đấu trong cửa sổ check-in | Xác nhận sự hiện diện, chính thức tham dự giải |
+| US-M2-20 | Organizer | Start giải đấu (CheckInOpen → InProgress) | Bắt đầu vòng thi đấu chính thức |
+| US-M2-21 | Organizer | Mark giải đấu là Completed | Kết thúc giải, chốt kết quả chính thức |
+| US-M2-22 | Organizer | Generate bracket sau khi check-in đóng | Tạo lịch thi đấu cho tất cả participants đã check-in |
+| US-M2-23 | Participant | Xem bracket của giải đấu | Biết mình thi đấu với ai, ở vòng nào |
+| US-M2-24 | Participant | Xem lịch thi đấu cá nhân | Biết cụ thể các trận đấu của mình (ngày giờ, đối thủ) |
+| US-M2-25 | Participant | Rút lui khỏi giải | Nhường chỗ cho người khác khi không thể tham dự |
+| US-M2-26 | Guest / User | Xem danh sách giải đấu đang mở/sắp diễn ra | Khám phá giải phù hợp để tham gia |
+| US-M2-27 | Guest / User | Tìm kiếm giải đấu theo tên | Tìm nhanh giải đã biết tên |
+| US-M2-28 | Guest / User | Lọc giải đấu theo loại, thể thức, trạng thái, địa điểm, ngày | Thu hẹp danh sách phù hợp nhu cầu |
+| US-M2-29 | Guest / User | Sắp xếp kết quả tìm kiếm theo ngày/phổ biến | Dễ dàng tìm giải gần nhất hoặc nổi bật nhất |
 
 ---
 
@@ -73,14 +75,32 @@
 | `name` | Required, 5–100 ký tự |
 | `type` | Required, enum: `Singles` \| `Doubles` |
 | `format` | Required, enum: `RoundRobin` \| `SingleElimination` \| `DoubleElimination` \| `Swiss` |
-| `start_date` | Required, phải trong tương lai |
+| `scoring_format` | Required, enum: `BestOf1` \| `BestOf3` — áp dụng cho tất cả matches trong giải |
+| `registration_type` | Required, enum: `Open` \| `Approval` |
+| `start_date` | Required, datetime, phải trong tương lai |
+| `end_date` | Required, datetime, phải sau `start_date` ít nhất 1 giờ — ngày kết thúc dự kiến của giải |
+| `registration_deadline` | Optional khi tạo Draft, Required khi Publish — datetime, phải trước `start_date` ít nhất 1 ngày |
+| `description` | Optional, tối đa 2000 ký tự — mô tả chi tiết giải đấu |
+| `banner_image_url` | Optional, URL ảnh bìa giải đấu (upload qua Cloudinary) |
 | `location.name` | Required, tên địa điểm, tối đa 200 ký tự |
 | `location.address` | Required, địa chỉ đầy đủ, tối đa 500 ký tự |
 | `location.lat` | Optional, latitude (có khi chọn từ Google Maps) |
 | `location.lng` | Optional, longitude (có khi chọn từ Google Maps) |
-| `location.place_id` | Optional, Google Maps Place ID (có khi chọn từ Google Maps) |
-| `min_capacity` | Required, integer |
-| `max_capacity` | Required, integer |
+| `location.place_id` | Optional, Google Maps Place ID |
+| `min_capacity` | Required, integer >= 4 |
+| `max_capacity` | Required, integer >= min_capacity, <= 256 |
+
+**BR-M2-03b** — Location field dùng Google Maps integration:
+- **Ưu tiên:** User search và chọn từ Google Places Autocomplete → tự động fill `address`, `lat`, `lng`, `place_id`
+- **Fallback:** Nếu không tìm thấy trên map → cho phép nhập `name` và `address` thủ công, `lat`/`lng`/`place_id` để trống
+- Khi có `place_id` → frontend hiển thị link "Xem trên Google Maps" trong chi tiết giải
+- Khi có `lat`/`lng` → frontend hiển thị map preview khi tạo và xem giải đấu
+- Filter Discovery theo `location` (BR-M2-22) search text trong cả `name` và `address`
+
+**BR-M2-03c** — `end_date` là ngày kết thúc **dự kiến** của giải, do Organizer ước tính khi tạo:
+- Conflict check (BR-M2-10) dùng khoảng `[start_date, end_date]` để kiểm tra overlap
+- Nếu giải kết thúc sớm hơn dự kiến, Organizer có thể update `end_date` khi mark Complete
+- Với `Doubles`: `end_date` phải tính đến số lượng matches của pairs
 
 **BR-M2-04** — Ràng buộc capacity:
 - `min_capacity` >= 4
@@ -94,19 +114,6 @@
 - `start_date` phải ít nhất **3 ngày** trong tương lai tính từ thời điểm publish
 - `registration_deadline` phải trước `start_date` ít nhất **1 ngày**
 - Tất cả required fields (BR-M2-03) phải đã điền đầy đủ
-
-**BR-M2-03b** — Location field dùng Google Maps integration:
-- **Ưu tiên:** User search và chọn từ Google Places Autocomplete → tự động fill `address`, `lat`, `lng`, `place_id`
-- **Fallback:** Nếu không tìm thấy trên map → cho phép nhập `name` và `address` thủ công, `lat`/`lng`/`place_id` để trống
-- Khi có `place_id` → frontend hiển thị link "Xem trên Google Maps" trong chi tiết giải
-- Khi có `lat`/`lng` → frontend hiển thị map preview khi tạo và xem giải đấu
-- Filter Discovery theo `location` (BR-M2-22) search text trong cả `name` và `address`
-
-**BR-M2-05b** — `registration_type` là setting của tournament (chọn khi tạo):
-- `Open` — user đăng ký trực tiếp, không cần duyệt
-- `Approval` — user gửi application, Organizer phải approve mới vào được
-
-Organizer **luôn có thể** invite hoặc direct-add user bất kể `registration_type`.
 
 ---
 
@@ -128,50 +135,56 @@ Organizer **luôn có thể** invite hoặc direct-add user bất kể `registra
 - Cùng đăng ký trong một request (không thể đăng ký từng người rồi ghép sau)
 - Chưa đăng ký giải này dưới bất kỳ hình thức nào
 
-**BR-M2-12** — Rút lui (Withdraw): Participant chỉ được rút khỏi giải khi tournament chưa ở trạng thái `InProgress` hoặc `Completed`. Gọi API rút lui khi tournament đang `InProgress` hoặc `Completed` sẽ nhận `422 Unprocessable Entity`.
+**BR-M2-12** — `registration_type` là setting của tournament (chọn khi tạo):
+- `Open` — user đăng ký trực tiếp, không cần duyệt
+- `Approval` — user gửi application, Organizer phải approve mới vào được
+
+Organizer **luôn có thể** invite hoặc direct-add user bất kể `registration_type`.
+
+**BR-M2-13** — Rút lui (Withdraw): Participant chỉ được rút khỏi giải khi tournament chưa ở trạng thái `InProgress` hoặc `Completed`. Gọi API rút lui khi tournament đang `InProgress` hoặc `Completed` sẽ nhận `422 Unprocessable Entity`.
 
 ---
 
-### 3.2b Invitation & Application
+### 3.3 Invitation & Application
 
-**BR-M2-25** — Organizer invite user: Chỉ có thể invite khi tournament ở trạng thái `Published`, `RegistrationOpen`, hoặc `RegistrationFull`. Mỗi user chỉ có tối đa 1 invitation active cho 1 giải tại 1 thời điểm.
+**BR-M2-14** — Organizer invite user: Chỉ có thể invite khi tournament ở trạng thái `Published`, `RegistrationOpen`, hoặc `RegistrationFull`. Mỗi user chỉ có tối đa 1 invitation active cho 1 giải tại 1 thời điểm.
 
-**BR-M2-26** — Invitation expiry: Invitation tự động expired sau **7 ngày** nếu user không accept hoặc decline. User nhận notification nhắc nhở sau 3 ngày chưa phản hồi.
+**BR-M2-15** — Invitation expiry: Invitation tự động expired sau **7 ngày** nếu user không accept hoặc decline. User nhận notification nhắc nhở sau 3 ngày chưa phản hồi.
 
-**BR-M2-27** — Direct add: Organizer có thể add user trực tiếp thành `Registered` mà không cần user accept. Áp dụng conflict check (BR-M2-10) trước khi add. User nhận notification "Bạn đã được thêm vào giải [tên giải]".
+**BR-M2-16** — Direct add: Organizer có thể add user trực tiếp thành `Registered` mà không cần user accept. Áp dụng conflict check (BR-M2-10) trước khi add. User nhận notification "Bạn đã được thêm vào giải [tên giải]".
 
-**BR-M2-28** — Application (khi `registration_type=Approval`): User gửi application kèm message tối đa **500 ký tự**. Mỗi user chỉ có 1 application active per tournament. Application chỉ được gửi khi tournament ở `RegistrationOpen` hoặc `RegistrationFull`.
+**BR-M2-17** — Application (khi `registration_type=Approval`): User gửi application kèm message tối đa **500 ký tự**. Mỗi user chỉ có 1 application active per tournament. Application chỉ được gửi khi tournament ở `RegistrationOpen` hoặc `RegistrationFull`.
 
-**BR-M2-29** — Approve application: Khi Organizer approve, hệ thống kiểm tra conflict (BR-M2-10) và capacity. Nếu còn slot → `Registered`. Nếu hết slot → `Waitlisted`. User nhận notification kết quả.
+**BR-M2-18** — Approve application: Khi Organizer approve, hệ thống kiểm tra conflict (BR-M2-10) và capacity. Nếu còn slot → `Registered`. Nếu hết slot → `Waitlisted`. User nhận notification kết quả.
 
-**BR-M2-30** — Reject application: Organizer phải nhập lý do reject (required, tối đa 200 ký tự). Lý do được gửi kèm notification cho user. Application chuyển sang `Rejected` — user có thể gửi lại application mới nếu tournament còn open.
+**BR-M2-19** — Reject application: Organizer phải nhập lý do reject (required, tối đa 200 ký tự). Lý do được gửi kèm notification cho user. Application chuyển sang `Rejected` — user có thể gửi lại application mới nếu tournament còn open.
 
-**BR-M2-31** — Conflict check áp dụng cho TẤT CẢ phương thức tham gia (open registration, accept invitation, approve application, direct add). Không có ngoại lệ kể cả direct add bởi Organizer.
+**BR-M2-20** — Conflict check áp dụng cho TẤT CẢ phương thức tham gia (open registration, accept invitation, approve application, direct add). Không có ngoại lệ kể cả direct add bởi Organizer.
 
 ---
 
-### 3.3 Tournament Lifecycle
+### 3.4 Tournament Lifecycle
 
-**BR-M2-13** — Check-in window: Cửa sổ check-in mở tự động **2 giờ trước** `start_date` (tournament chuyển sang `CheckInOpen`). Cửa sổ đóng khi Organizer start tournament (chuyển sang `InProgress`).
+**BR-M2-21** — Check-in window: Cửa sổ check-in mở tự động **2 giờ trước** `start_date` (tournament chuyển sang `CheckInOpen`). Cửa sổ đóng khi Organizer start tournament (chuyển sang `InProgress`).
 
-**BR-M2-14** — NoShow: Participant `Registered` không thực hiện check-in trước khi tournament start sẽ tự động bị đánh dấu `NoShow`. Slot của họ được xem như trống và hệ thống kiểm tra waitlist để promote (theo BR-M2-09). Participant `NoShow` không được đưa vào bracket.
+**BR-M2-22** — NoShow: Participant `Registered` không thực hiện check-in trước khi tournament start sẽ tự động bị đánh dấu `NoShow`. Slot của họ được xem như trống và hệ thống kiểm tra waitlist để promote (theo BR-M2-09). Participant `NoShow` không được đưa vào bracket.
 
-**BR-M2-15** — Điều kiện Start: Tournament chỉ có thể chuyển sang `InProgress` khi số participants ở trạng thái `CheckedIn` >= `min_capacity`. Nếu không đủ, Organizer nhận `422` với message rõ ràng.
+**BR-M2-23** — Điều kiện Start: Tournament chỉ có thể chuyển sang `InProgress` khi số participants ở trạng thái `CheckedIn` >= `min_capacity`. Nếu không đủ, Organizer nhận `422` với message rõ ràng.
 
-**BR-M2-16** — Cancel rules:
+**BR-M2-24** — Cancel rules:
 - Organizer có thể cancel tournament ở bất kỳ trạng thái nào **ngoại trừ** `InProgress` và `Completed`
 - Khi tournament đã `InProgress`, chỉ **Admin** mới có quyền cancel
 - `Completed` không thể cancel
 
-**BR-M2-17** — Tournament hoàn thành (`Completed`) khi:
+**BR-M2-25** — Tournament hoàn thành (`Completed`) khi:
 - Organizer mark complete một cách thủ công, **hoặc**
 - Tất cả matches trong bracket đều có kết quả (status `Completed` hoặc `Walkover`)
 
 ---
 
-### 3.4 Bracket
+### 3.5 Bracket
 
-**BR-M2-18** — Tournament formats được hỗ trợ:
+**BR-M2-26** — Tournament formats được hỗ trợ:
 
 | Format | Tên | Mô tả | Phù hợp khi |
 |--------|-----|-------|-------------|
@@ -184,31 +197,44 @@ Organizer chọn `format` khi tạo giải. Không thể thay đổi sau khi bra
 
 > **Nguồn:** `REDESIGN/03_Database_Recommendations.md` — đề xuất `round_robin`, `bracket`, `swiss`.
 
-**BR-M2-19** — Generate bracket: Bracket chỉ được generate sau khi check-in window đóng (khi Organizer nhấn Start hoặc sau `start_date`). Thành phần bracket dựa trên danh sách participants có trạng thái `CheckedIn`. Participants `NoShow`, `Withdrawn` không được đưa vào bracket.
+**BR-M2-27** — Generate bracket: Bracket chỉ được generate sau khi check-in window đóng (khi Organizer nhấn Start hoặc sau `start_date`). Thành phần bracket dựa trên danh sách participants có trạng thái `CheckedIn`. Participants `NoShow`, `Withdrawn` không được đưa vào bracket.
 
-**BR-M2-20** — Sau khi bracket đã được generate (tournament ở trạng thái `InProgress`), không thể thêm hoặc bớt participants. Mọi thay đổi danh sách bị từ chối với `422 Unprocessable Entity`.
+**BR-M2-27b** — Bye handling:
+- Khi `format=SingleElimination` hoặc `DoubleElimination` và số participants `CheckedIn` là số lẻ → hệ thống tự động tạo "bye" cho participant được seed cao nhất (hoặc random nếu không có seed)
+- Participant có bye tự động thắng round đó và đi vào round tiếp theo
+- Bye được hiển thị rõ trong bracket view
+- Với `RoundRobin` và `Swiss`: không cần bye vì tất cả đều đấu đủ số vòng
+
+**BR-M2-27c** — Doubles bracket:
+- Với tournament `type=Doubles`: bracket sử dụng **pairs** (cặp đôi), không phải individual users
+- Mỗi pair = 2 users đăng ký cùng nhau (BR-M2-11)
+- Bracket positions = số pairs `CheckedIn`, không phải số users
+- Khi generate bracket: lấy danh sách pairs có cả 2 thành viên đều ở trạng thái `CheckedIn`
+
+**BR-M2-28** — Sau khi bracket đã được generate (tournament ở trạng thái `InProgress`), không thể thêm hoặc bớt participants. Mọi thay đổi danh sách bị từ chối với `422 Unprocessable Entity`.
 
 ---
 
-### 3.5 Discovery & Search
+### 3.6 Discovery & Search
 
-**BR-M2-21** — Visibility public: Chỉ những tournaments ở các trạng thái sau mới hiển thị trong danh sách public và kết quả tìm kiếm:
+**BR-M2-29** — Visibility public: Chỉ những tournaments ở các trạng thái sau mới hiển thị trong danh sách public và kết quả tìm kiếm:
 - `Published`, `RegistrationOpen`, `RegistrationFull`, `RegistrationClosed`, `CheckInOpen`, `InProgress`, `Completed`
 
 Tournaments ở trạng thái `Draft` và `Cancelled` **không** hiển thị public (ẩn với Guest/User; Admin vẫn thấy).
 
-**BR-M2-22** — Filter options:
+**BR-M2-30** — Filter options:
 
 | Filter | Loại | Mô tả |
 |--------|------|-------|
 | `type` | enum | `Singles` \| `Doubles` |
+| `format` | enum (multi-select) | Lọc theo thể thức giải đấu |
 | `status` | enum (multi-select) | Lọc theo trạng thái giải |
 | `location` | text | Tìm kiếm text trong trường location |
 | `date_from` | date | start_date >= date_from |
 | `date_to` | date | start_date <= date_to |
 | `skill_level` | decimal | Lọc theo skill level tối thiểu/tối đa của giải |
 
-**BR-M2-23** — Sort options:
+**BR-M2-31** — Sort options:
 
 | Sort key | Chiều | Mô tả |
 |----------|-------|-------|
@@ -216,7 +242,7 @@ Tournaments ở trạng thái `Draft` và `Cancelled` **không** hiển thị pu
 | `created_at` | `desc` | Mới nhất trước (default) |
 | `participants_count` | `desc` | Phổ biến nhất (nhiều người tham gia nhất) |
 
-**BR-M2-24** — Pagination:
+**BR-M2-32** — Pagination:
 - Mặc định: 20 items/page
 - Tối đa: 100 items/page
 - Sử dụng cursor-based hoặc offset pagination
@@ -397,6 +423,8 @@ Tournaments ở trạng thái `Draft` và `Cancelled` **không** hiển thị pu
   }
   ```
 
+---
+
 ### AC-M2-15 — Organizer invite user thành công
 ```
 Given  Tournament ở trạng thái RegistrationOpen, user chưa được invite
@@ -461,6 +489,25 @@ When   Organizer gọi POST /api/tournaments/{idA}/participants/direct-add với
 Then   - HTTP 422 Unprocessable Entity
        - Message: "User đang tham gia giải [tên giải B] có lịch trùng"
        - Không thêm user vào giải
+```
+
+### AC-M2-edit — Organizer edit tournament thành công
+```
+Given  Tournament ở trạng thái Draft hoặc Published, user là Organizer
+When   Organizer gọi PUT /api/tournaments/{id} với name mới
+Then   - HTTP 200 OK
+       - Tournament name được cập nhật
+       - Không thể edit khi tournament đã InProgress hoặc Completed (→ 422)
+```
+
+### AC-M2-doubles — Doubles pair registration thành công
+```
+Given  Tournament type=Doubles, RegistrationOpen, còn slot
+When   User A gọi POST /api/tournaments/{id}/register với partner_id = User B
+Then   - HTTP 201 Created
+       - 2 Participant records tạo (User A và User B) cùng pair_id
+       - Conflict check cho cả 2 users
+       - Nếu User B đã có lịch trùng → 422, không tạo record nào
 ```
 
 ---
