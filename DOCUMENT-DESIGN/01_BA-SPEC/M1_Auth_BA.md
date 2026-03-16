@@ -9,8 +9,8 @@
 | Actor | Quyền trong module Auth & Profile |
 |-------|----------------------------------|
 | **Guest** (chưa đăng nhập) | Đăng ký tài khoản email, Đăng nhập email/password, Đăng nhập OAuth (Google/Apple/Facebook), Quên mật khẩu / Reset password |
-| **User** (đã đăng nhập) | Đổi mật khẩu, Xem & cập nhật profile của mình, Upload avatar, Logout (revoke token), Refresh access token, Xem profile người khác |
-| **Admin** | Xem danh sách user accounts, Khoá/mở khoá tài khoản, Reset email verification thủ công |
+| **User** (đã đăng nhập) | Đổi mật khẩu, Xem & cập nhật profile của mình, Upload avatar, Logout (revoke token), Refresh access token, Xem profile người khác, **Xem danh sách active sessions**, **Logout tất cả thiết bị**, **Đổi email** |
+| **Admin** | Xem danh sách user accounts, Khoá/mở khoá tài khoản, Reset email verification thủ công, **Xem audit log hoạt động của user** |
 
 ---
 
@@ -30,6 +30,17 @@
 | US-M1-10 | User | Upload ảnh đại diện | Profile của tôi có hình ảnh nhận diện |
 | US-M1-11 | User | Đăng xuất khỏi thiết bị hiện tại | Phiên đăng nhập của tôi được chấm dứt an toàn |
 | US-M1-12 | Guest | Đăng nhập OAuth bằng email đã có tài khoản email/password | Tôi không bị tạo tài khoản trùng lặp |
+| US-M1-13 | User | Xem danh sách thiết bị đang đăng nhập (active sessions) | Tôi có thể phát hiện đăng nhập trái phép |
+| US-M1-14 | User | Logout khỏi tất cả thiết bị cùng lúc | Tôi có thể bảo vệ tài khoản khi mất thiết bị |
+| US-M1-15 | User | Nhận email thông báo khi tài khoản bị khoá do đăng nhập sai nhiều lần | Tôi biết có người đang cố truy cập tài khoản của mình |
+| US-M1-16 | User | Đổi địa chỉ email | Tôi có thể cập nhật thông tin liên lạc khi email cũ không còn dùng |
+| US-M1-17 | Admin | Xem audit log hoạt động của từng user | Tôi có thể điều tra các hành vi bất thường |
+
+<!-- FUTURE PHASE — chưa implement trong Phase 1:
+| US-M1-F01 | User | Xoá tài khoản vĩnh viễn | ... | (cần quyết định data retention policy trước)
+| US-M1-F02 | User | Nhận cảnh báo đăng nhập từ thiết bị/IP lạ | ... | (suspicious login detection)
+| US-M1-F03 | User | Bật xác thực 2 yếu tố (2FA) | ... | (TOTP/email OTP)
+-->
 
 ---
 
@@ -110,6 +121,29 @@
 - Logout chỉ **revoke refresh token của thiết bị hiện tại** (single device logout)
 - Các phiên đăng nhập trên thiết bị khác **không bị ảnh hưởng**
 - Sau khi logout, access token hiện tại vẫn còn hiệu lực cho đến khi hết 15 phút — client phải tự xoá
+
+### BR-M1-13: Session Management — Active Sessions
+- Mỗi lần đăng nhập thành công → tạo 1 `UserSession` record lưu: `device_name`, `device_type` (mobile/web), `ip_address`, `last_active_at`
+- User có thể xem danh sách tất cả active sessions của mình
+- User có thể **revoke bất kỳ session cụ thể** nào (logout từ xa)
+- Sessions không active trong **30 ngày** tự động expired
+
+### BR-M1-14: Logout All Devices
+- User có thể revoke **tất cả refresh tokens** của mình (tất cả thiết bị)
+- Session hiện tại cũng bị revoke
+- Thao tác này yêu cầu **xác nhận password** hiện tại trước khi thực hiện
+
+### BR-M1-15: Account Lock Notification
+- Khi tài khoản bị khoá (sau 5 lần fail) → gửi **email thông báo** ngay lập tức
+- Email chứa: thời gian bị khoá, IP address của lần đăng nhập fail, link "không phải tôi" để report
+- Nếu email chưa verify → **không gửi** (tránh email enumeration)
+
+### BR-M1-16: Email Change
+- Yêu cầu nhập **password hiện tại** để xác nhận
+- Gửi **OTP xác thực đến email mới** (expire 15 phút)
+- Email mới không được **trùng với email của tài khoản khác**
+- Sau khi đổi email thành công → **revoke tất cả refresh tokens** (force re-login)
+- Email cũ nhận thông báo "email đã được thay đổi"
 
 ---
 
@@ -237,6 +271,53 @@ When   POST /api/auth/reset-password với expired token
 Then   - HTTP 422 Unprocessable Entity
        - Message: "Link đặt lại mật khẩu đã hết hạn. Vui lòng yêu cầu lại."
        - Không thay đổi password
+```
+
+### AC-M1-14: Xem Active Sessions
+```
+Given  User đang đăng nhập từ 2 thiết bị (web + mobile)
+When   GET /api/auth/sessions
+Then   - HTTP 200 OK
+       - Trả về danh sách 2 sessions với: device_name, device_type, ip_address, last_active_at
+       - Session hiện tại được đánh dấu is_current = true
+```
+
+### AC-M1-15: Logout Tất Cả Thiết Bị
+```
+Given  User đang đăng nhập từ 3 thiết bị, nhập đúng password hiện tại
+When   POST /api/auth/logout-all với current_password
+Then   - HTTP 200 OK
+       - Tất cả refresh tokens bị revoke
+       - User phải đăng nhập lại trên tất cả thiết bị
+```
+
+### AC-M1-16: Account Lock — Gửi Email Thông Báo
+```
+Given  User (email đã verify) đăng nhập sai lần thứ 5
+When   Hệ thống khoá tài khoản
+Then   - Email thông báo được gửi đến địa chỉ email của user
+       - Email chứa IP address và thời gian khoá
+       - Tài khoản bị khoá 15 phút
+```
+
+### AC-M1-17: Đổi Email Thành Công
+```
+Given  User nhập password đúng và email mới chưa tồn tại
+When   POST /api/auth/change-email, OTP xác thực được gửi đến email mới và user nhập đúng OTP
+Then   - HTTP 200 OK
+       - Email được cập nhật
+       - Tất cả refresh tokens bị revoke
+       - Email cũ nhận thông báo thay đổi
+       - Email mới nhận thông báo xác nhận
+```
+
+### AC-M1-18: Đổi Email — Email Mới Đã Tồn Tại
+```
+Given  User nhập email mới đã thuộc tài khoản khác
+When   POST /api/auth/change-email
+Then   - HTTP 409 Conflict
+       - Message: "Email đã được sử dụng"
+       - Email không được thay đổi
 ```
 
 ---
