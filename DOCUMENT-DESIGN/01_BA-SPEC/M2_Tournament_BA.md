@@ -159,11 +159,18 @@ Organizer **luôn có thể** invite hoặc direct-add user bất kể `registra
 
 ### 3.4 Bracket
 
-**BR-M2-18** — Bracket formats được hỗ trợ:
-- `SingleElimination` — loại trực tiếp
-- `RoundRobin` — vòng tròn
+**BR-M2-18** — Tournament formats được hỗ trợ:
 
-Organizer chọn `bracket_format` khi tạo giải. Không thể thay đổi sau khi bracket được generate.
+| Format | Tên | Mô tả | Phù hợp khi |
+|--------|-----|-------|-------------|
+| `RoundRobin` | Vòng tròn | Mọi participant gặp nhau 1 lần, tính điểm tổng kết | Số người ít (≤16), muốn công bằng tối đa |
+| `SingleElimination` | Loại trực tiếp | Thua 1 lần là out, bracket kiểu cây | Nhiều người tham gia, muốn kết thúc nhanh |
+| `DoubleElimination` | Loại hai lần | Thua lần đầu vào nhánh thua, thua lần 2 mới out | Muốn fairness hơn SingleElimination |
+| `Swiss` | Hệ thống Swiss | Ghép đối thủ theo điểm số, không có bye, không loại trực tiếp | Số người lẻ, muốn đấu nhiều vòng mà không cần loại |
+
+Organizer chọn `format` khi tạo giải. Không thể thay đổi sau khi bracket được generate.
+
+> **Nguồn:** `REDESIGN/03_Database_Recommendations.md` — đề xuất `round_robin`, `bracket`, `swiss`.
 
 **BR-M2-19** — Generate bracket: Bracket chỉ được generate sau khi check-in window đóng (khi Organizer nhấn Start hoặc sau `start_date`). Thành phần bracket dựa trên danh sách participants có trạng thái `CheckedIn`. Participants `NoShow`, `Withdrawn` không được đưa vào bracket.
 
