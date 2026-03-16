@@ -12,9 +12,9 @@
 | Actor | Quyền trong Module Tournament |
 |-------|-------------------------------|
 | **Guest** (chưa đăng nhập) | Xem danh sách giải đấu public; tìm kiếm giải theo tên/filter; xem chi tiết giải đấu (thông tin chung, số người tham gia, lịch thi đấu) |
-| **User** (đã đăng nhập, chưa join giải) | Tất cả của Guest + đăng ký tham gia giải đấu đang mở; vào danh sách chờ (waitlist) khi giải đã đầy |
+| **User** (đã đăng nhập, chưa join giải) | Tất cả của Guest + đăng ký tham gia giải đấu đang mở (nếu `registration_type=Open`); gửi application xin vào giải (kèm message) nếu `registration_type=Approval`; accept/decline invitation từ Organizer; vào waitlist khi giải đã đầy |
 | **Participant** (đã join giải cụ thể) | Tất cả của User + check-in vào giải; xem bracket và lịch thi đấu của cá nhân; rút khỏi giải (nếu giải chưa `InProgress`) |
-| **Organizer** (tạo giải — `tournaments.created_by`) | Tất cả của Participant + tạo và chỉnh sửa giải đấu; publish giải (`Draft` → `Published`); mở/đóng đăng ký; duyệt participants (nếu cần); generate bracket; start giải; mark complete giải; cancel giải (khi giải chưa `InProgress`) |
+| **Organizer** (tạo giải — `tournaments.created_by`) | Tất cả của Participant + tạo và chỉnh sửa giải đấu; publish giải; mở/đóng đăng ký; **mời user cụ thể vào giải**; **thêm user trực tiếp** (không cần accept); **xem danh sách invitations đã gửi**; **xem danh sách applications đang chờ duyệt**; **approve/reject applications** (kèm lý do); generate bracket; start giải; mark complete; cancel giải |
 | **Creator** (system role — được cấp bởi Admin) | Được phép tạo giải đấu mới (sau khi tạo → tự động trở thành Organizer của giải đó) |
 | **Admin** (quản trị hệ thống) | Tất cả quyền của Organizer trên mọi giải + force cancel bất kỳ giải ở bất kỳ trạng thái; xem tất cả giải kể cả `Draft` và `Cancelled`; chỉnh sửa bất kỳ giải đấu; can thiệp vào participant status |
 
@@ -41,6 +41,14 @@
 | US-M2-13 | Organizer | Generate bracket sau khi check-in đóng | Tạo lịch thi đấu cho tất cả participants đã check-in |
 | US-M2-14 | Participant | Xem bracket của giải đấu | Biết mình thi đấu với ai, ở vòng nào |
 | US-M2-15 | Participant | Xem lịch thi đấu cá nhân | Biết cụ thể các trận đấu của mình (ngày giờ, đối thủ) |
+| US-M2-20 | Organizer | Mời user cụ thể tham gia giải đấu | User đó nhận invitation và có thể accept/decline |
+| US-M2-21 | Organizer | Thêm user trực tiếp vào giải (không cần accept) | Thêm nhanh người quen mà không cần chờ họ tự đăng ký |
+| US-M2-22 | User | Nhận invitation từ Organizer và accept hoặc decline | Quyết định có tham gia giải hay không |
+| US-M2-23 | User | Gửi application xin vào giải kèm message giới thiệu | Organizer biết thêm về tôi trước khi duyệt |
+| US-M2-24 | Organizer | Xem danh sách tất cả invitations đã gửi (kèm trạng thái) | Biết ai đã accept, ai chưa phản hồi, ai decline |
+| US-M2-25 | Organizer | Xem danh sách applications đang chờ duyệt | Quyết định ai được tham gia giải |
+| US-M2-26 | Organizer | Approve application của user | User được tham gia giải chính thức |
+| US-M2-27 | Organizer | Reject application kèm lý do | User biết tại sao bị từ chối |
 | US-M2-16 | Guest / User | Xem danh sách giải đấu đang mở/sắp diễn ra | Khám phá giải phù hợp để tham gia |
 | US-M2-17 | Guest / User | Tìm kiếm giải đấu theo tên | Tìm nhanh giải đã biết tên |
 | US-M2-18 | Guest / User | Lọc giải đấu theo loại, trạng thái, địa điểm, ngày, trình độ | Thu hẹp danh sách phù hợp nhu cầu |
@@ -82,6 +90,12 @@
 - `registration_deadline` phải trước `start_date` ít nhất **1 ngày**
 - Tất cả required fields (BR-M2-03) phải đã điền đầy đủ
 
+**BR-M2-05b** — `registration_type` là setting của tournament (chọn khi tạo):
+- `Open` — user đăng ký trực tiếp, không cần duyệt
+- `Approval` — user gửi application, Organizer phải approve mới vào được
+
+Organizer **luôn có thể** invite hoặc direct-add user bất kể `registration_type`.
+
 ---
 
 ### 3.2 Registration
@@ -103,6 +117,24 @@
 - Chưa đăng ký giải này dưới bất kỳ hình thức nào
 
 **BR-M2-12** — Rút lui (Withdraw): Participant chỉ được rút khỏi giải khi tournament chưa ở trạng thái `InProgress` hoặc `Completed`. Gọi API rút lui khi tournament đang `InProgress` hoặc `Completed` sẽ nhận `422 Unprocessable Entity`.
+
+---
+
+### 3.2b Invitation & Application
+
+**BR-M2-25** — Organizer invite user: Chỉ có thể invite khi tournament ở trạng thái `Published`, `RegistrationOpen`, hoặc `RegistrationFull`. Mỗi user chỉ có tối đa 1 invitation active cho 1 giải tại 1 thời điểm.
+
+**BR-M2-26** — Invitation expiry: Invitation tự động expired sau **7 ngày** nếu user không accept hoặc decline. User nhận notification nhắc nhở sau 3 ngày chưa phản hồi.
+
+**BR-M2-27** — Direct add: Organizer có thể add user trực tiếp thành `Registered` mà không cần user accept. Áp dụng conflict check (BR-M2-10) trước khi add. User nhận notification "Bạn đã được thêm vào giải [tên giải]".
+
+**BR-M2-28** — Application (khi `registration_type=Approval`): User gửi application kèm message tối đa **500 ký tự**. Mỗi user chỉ có 1 application active per tournament. Application chỉ được gửi khi tournament ở `RegistrationOpen` hoặc `RegistrationFull`.
+
+**BR-M2-29** — Approve application: Khi Organizer approve, hệ thống kiểm tra conflict (BR-M2-10) và capacity. Nếu còn slot → `Registered`. Nếu hết slot → `Waitlisted`. User nhận notification kết quả.
+
+**BR-M2-30** — Reject application: Organizer phải nhập lý do reject (required, tối đa 200 ký tự). Lý do được gửi kèm notification cho user. Application chuyển sang `Rejected` — user có thể gửi lại application mới nếu tournament còn open.
+
+**BR-M2-31** — Conflict check áp dụng cho TẤT CẢ phương thức tham gia (open registration, accept invitation, approve application, direct add). Không có ngoại lệ kể cả direct add bởi Organizer.
 
 ---
 
@@ -346,6 +378,72 @@ Tournaments ở trạng thái `Draft` và `Cancelled` **không** hiển thị pu
   }
   ```
 
+### AC-M2-15 — Organizer invite user thành công
+```
+Given  Tournament ở trạng thái RegistrationOpen, user chưa được invite
+When   Organizer gọi POST /api/tournaments/{id}/invitations với userId
+Then   - HTTP 201 Created
+       - Invitation record tạo với status Pending, expire sau 7 ngày
+       - User nhận notification "Bạn được mời tham gia giải [tên]"
+```
+
+### AC-M2-16 — User accept invitation
+```
+Given  User có invitation Pending, chưa có lịch trùng
+When   User gọi POST /api/tournaments/{id}/invitations/{invId}/accept
+Then   - HTTP 200 OK
+       - Invitation status → Accepted
+       - Participant record tạo với status Registered
+       - Organizer nhận notification "[User] đã chấp nhận lời mời"
+```
+
+### AC-M2-17 — Invitation hết hạn
+```
+Given  Invitation đã quá 7 ngày, user chưa phản hồi
+When   User gọi accept invitation đã expired
+Then   - HTTP 422 Unprocessable Entity
+       - Message: "Lời mời đã hết hạn"
+       - Invitation status → Expired
+```
+
+### AC-M2-18 — User gửi application với message
+```
+Given  Tournament registration_type=Approval, ở trạng thái RegistrationOpen
+When   User gọi POST /api/tournaments/{id}/applications với message "Tôi có 3 năm kinh nghiệm..."
+Then   - HTTP 201 Created
+       - Application record tạo với status Pending, message được lưu
+       - Organizer nhận notification "Có application mới từ [User]"
+```
+
+### AC-M2-19 — Organizer approve application (còn slot)
+```
+Given  Application đang Pending, tournament còn slot trống
+When   Organizer gọi PUT /api/tournaments/{id}/applications/{appId}/approve
+Then   - HTTP 200 OK
+       - Application status → Approved
+       - Participant record tạo với status Registered
+       - User nhận notification "Application của bạn đã được chấp nhận"
+```
+
+### AC-M2-20 — Organizer reject application với lý do
+```
+Given  Application đang Pending
+When   Organizer gọi PUT /api/tournaments/{id}/applications/{appId}/reject với reason
+Then   - HTTP 200 OK
+       - Application status → Rejected
+       - User nhận notification kèm lý do từ chối
+       - User có thể gửi application mới nếu tournament còn open
+```
+
+### AC-M2-21 — Conflict check khi direct add
+```
+Given  User đang là Participant của giải B có lịch trùng với giải A
+When   Organizer gọi POST /api/tournaments/{idA}/participants/direct-add với userId
+Then   - HTTP 422 Unprocessable Entity
+       - Message: "User đang tham gia giải [tên giải B] có lịch trùng"
+       - Không thêm user vào giải
+```
+
 ---
 
 ## Section 5: State Machine
@@ -436,6 +534,27 @@ Completed
               ▼            ▼
           Registered   Withdrawn
 ```
+
+---
+
+### 5.3 Invitation Status
+
+| From State | Event | To State | Ghi chú |
+|-----------|-------|----------|---------|
+| — | Organizer invite user | `Pending` | Expire sau 7 ngày |
+| `Pending` | User accept | `Accepted` | Tạo Participant record |
+| `Pending` | User decline | `Declined` | Organizer có thể invite lại |
+| `Pending` | Quá 7 ngày | `Expired` | Auto trigger |
+
+### 5.4 Application Status
+
+| From State | Event | To State | Ghi chú |
+|-----------|-------|----------|---------|
+| — | User submit application | `Pending` | Kèm message tối đa 500 ký tự |
+| `Pending` | Organizer approve | `Approved` | Tạo Participant record (Registered hoặc Waitlisted) |
+| `Pending` | Organizer reject | `Rejected` | Kèm lý do, notify user |
+| `Pending` | Tournament cancelled | `Cancelled` | Auto |
+| `Rejected` | User gửi lại (tournament vẫn open) | `Pending` | Cho phép gửi lại |
 
 ---
 
