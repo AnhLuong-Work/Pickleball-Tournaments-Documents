@@ -72,6 +72,7 @@
 |-------|-----------|
 | `name` | Required, 5–100 ký tự |
 | `type` | Required, enum: `Singles` \| `Doubles` |
+| `format` | Required, enum: `RoundRobin` \| `SingleElimination` \| `DoubleElimination` \| `Swiss` |
 | `start_date` | Required, phải trong tương lai |
 | `location` | Required, tối đa 200 ký tự |
 | `min_capacity` | Required, integer |
