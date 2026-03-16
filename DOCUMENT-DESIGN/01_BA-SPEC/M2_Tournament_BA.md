@@ -74,7 +74,11 @@
 | `type` | Required, enum: `Singles` \| `Doubles` |
 | `format` | Required, enum: `RoundRobin` \| `SingleElimination` \| `DoubleElimination` \| `Swiss` |
 | `start_date` | Required, phải trong tương lai |
-| `location` | Required, tối đa 200 ký tự |
+| `location.name` | Required, tên địa điểm, tối đa 200 ký tự |
+| `location.address` | Required, địa chỉ đầy đủ, tối đa 500 ký tự |
+| `location.lat` | Optional, latitude (có khi chọn từ Google Maps) |
+| `location.lng` | Optional, longitude (có khi chọn từ Google Maps) |
+| `location.place_id` | Optional, Google Maps Place ID (có khi chọn từ Google Maps) |
 | `min_capacity` | Required, integer |
 | `max_capacity` | Required, integer |
 
@@ -90,6 +94,13 @@
 - `start_date` phải ít nhất **3 ngày** trong tương lai tính từ thời điểm publish
 - `registration_deadline` phải trước `start_date` ít nhất **1 ngày**
 - Tất cả required fields (BR-M2-03) phải đã điền đầy đủ
+
+**BR-M2-03b** — Location field dùng Google Maps integration:
+- **Ưu tiên:** User search và chọn từ Google Places Autocomplete → tự động fill `address`, `lat`, `lng`, `place_id`
+- **Fallback:** Nếu không tìm thấy trên map → cho phép nhập `name` và `address` thủ công, `lat`/`lng`/`place_id` để trống
+- Khi có `place_id` → frontend hiển thị link "Xem trên Google Maps" trong chi tiết giải
+- Khi có `lat`/`lng` → frontend hiển thị map preview khi tạo và xem giải đấu
+- Filter Discovery theo `location` (BR-M2-22) search text trong cả `name` và `address`
 
 **BR-M2-05b** — `registration_type` là setting của tournament (chọn khi tạo):
 - `Open` — user đăng ký trực tiếp, không cần duyệt
