@@ -81,9 +81,23 @@ DOCUMENT-DESIGN/
 
 ## 6. Roles
 
-| Role | Mô tả |
-|------|-------|
-| `Admin` | Quản trị hệ thống toàn phần |
-| `Creator` | Người tạo và quản lý giải đấu |
-| `Player` | Người tham gia giải đấu |
-| `User` / `Guest` | Người dùng chưa join giải, chỉ xem |
+Hệ thống dùng **3 system roles** với permission abstraction — dễ scale sau này mà không cần refactor business logic.
+
+| Role | Mô tả | Default |
+|------|-------|---------|
+| `User` | Join giải, xem, chat, community game | ✅ Khi đăng ký |
+| `Creator` | Tất cả của User + tạo/quản lý giải đấu | Upgrade từ User |
+| `Admin` | Tất cả quyền + quản trị hệ thống | Set thủ công |
+
+**Hierarchy:** `Admin` ⊃ `Creator` ⊃ `User` — mỗi user có đúng 1 role.
+
+**Contextual roles** (trong từng giải đấu, không phải system role):
+- `Organizer` — user đã tạo giải đó (lưu qua `tournaments.created_by`)
+- `Participant` — user đã join giải đó (lưu qua bảng `participants`)
+
+**Authorization pattern:**
+```csharp
+// Luôn check permission, không check role trực tiếp
+if (user.HasPermission("tournament.create")) { ... }
+// → dễ swap sang full RBAC sau này nếu cần
+```

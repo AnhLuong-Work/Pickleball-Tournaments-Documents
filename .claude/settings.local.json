@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for f:*)",
+      "Bash(do)",
+      "Bash(echo \"=== $f ===\")",
+      "Read(//d/WorkPersonal/Projects/AppPick/Documents/**)",
+      "Bash(__NEW_LINE_2b0611c2f331ce36__ done:*)",
+      "Bash(__NEW_LINE_31d8d951933c14e0__ done:*)",
+      "Bash(BASE=\"d:/WorkPersonal/Projects/AppPick/pickleball-nest-app/src\"\nmkdir -p \"$BASE/domain/entities\"\nmkdir -p \"$BASE/domain/enums\"\nmkdir -p \"$BASE/modules/auth/strategies\"\nmkdir -p \"$BASE/modules/auth/dto\"\nmkdir -p \"$BASE/modules/users/dto\"\nmkdir -p \"$BASE/modules/tournaments/dto\"\nmkdir -p \"$BASE/modules/matches/dto\"\nmkdir -p \"$BASE/modules/community/dto\"\nmkdir -p \"$BASE/modules/chat/dto\"\nmkdir -p \"$BASE/modules/notifications\"\nmkdir -p \"$BASE/infrastructure/database\"\nmkdir -p \"$BASE/infrastructure/redis\"\nmkdir -p \"$BASE/infrastructure/storage\"\nmkdir -p \"$BASE/infrastructure/fcm\"\nmkdir -p \"$BASE/gateways\"\nmkdir -p \"$BASE/queues\"\nmkdir -p \"$BASE/common/guards\"\nmkdir -p \"$BASE/common/decorators\"\nmkdir -p \"$BASE/common/filters\"\nmkdir -p \"$BASE/common/interceptors\"\necho \"DONE\")",
+      "Bash(BASE=\"d:/WorkPersonal/Projects/AppPick/pickleball-nest-app/src\"\nrm -rf \"$BASE/entities\"\nrm -rf \"$BASE/auth\"\nrm -rf \"$BASE/users\"\nrm -rf \"$BASE/decorators\"\nrm -rf \"$BASE/exception-filters\"\nrm -rf \"$BASE/interceptors\"\nrm -f \"$BASE/data-source.ts\"\necho \"DONE\")"
+    ]
+  }
+}
